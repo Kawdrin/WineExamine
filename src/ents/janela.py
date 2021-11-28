@@ -1,9 +1,19 @@
 from pygame.sprite import Sprite
-from pygame import Rect
+from pygame import Rect, mouse, Surface
 from pygame.transform import scale
 from tools.sprite_sheet import SpriteSheet
 
 SPRITESHEET = SpriteSheet('res/wine.png')
+
+class Mouse(Sprite):
+    def __init__(self, *groups):
+        super().__init__(*groups)
+        self.image = Surface((4,4))
+        self.rect = Rect(0,0,4,4)
+
+    def update(self):
+        self.rect.x, self.rect.y = mouse.get_pos()
+
 
 class JanelaDetalhe(Sprite):
     def __init__(self, *groups):

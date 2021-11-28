@@ -2,9 +2,12 @@ import sys
 import pygame
 
 from pygame import display, fastevent, time
-from pygame.sprite import Group
+from pygame.sprite import Group, groupcollide
 
-from ents.janela import JanelaDetalhe
+from ents.janela import JanelaDetalhe, Mouse
+from ents.presente import PresenteFechado
+
+from groups import tela_group, presente_group, mouse_group
 
 sys.path.insert(0, '/')
 
@@ -21,21 +24,29 @@ class WindowMain:
         self.FPS_TICK = time.Clock()
 
     def inicializar_grupos(self):
-        self.tela_group = Group()
-        self.JanelaDetalhe = JanelaDetalhe(self.tela_group)
+        Mouse(mouse_group)
+        JanelaDetalhe(tela_group)
+        PresenteFechado(presente_group)
 
     def eventos_tela(self):
         for evento in fastevent.get():
             if evento.type == pygame.QUIT:
                 self.WINDOWLOOP = False
 
+            for colision in groupcollide(presente_group, mouse_group, False, False):
+                if evento.type == pygame.MOUSEBUTTONUP and evento.button == 1:
+                    colision.click()
+
     def atualizar_tela(self):
-        self.tela_group.update()
+        mouse_group.update()
+        presente_group.update()
+        tela_group.update()
         display.flip()
 
 
     def desenhar_tela(self):
-        self.tela_group.draw(self.tela)
+        tela_group.draw(self.tela)
+        presente_group.draw(self.tela)
 
     def window_loop(self):
         self.inicializar_grupos()
