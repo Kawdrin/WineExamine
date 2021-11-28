@@ -4,7 +4,7 @@ import pygame
 from pygame import display, fastevent, time
 from pygame.sprite import Group, groupcollide
 
-from ents.janela import JanelaDetalhe, Mouse
+from ents.janela import JanelaDetalhe, Mouse, JanelaVinhos
 from ents.presente import PresenteFechado
 
 from groups import tela_group, presente_group, mouse_group
@@ -26,6 +26,7 @@ class WindowMain:
     def inicializar_grupos(self):
         Mouse(mouse_group)
         JanelaDetalhe(tela_group)
+        JanelaVinhos(tela_group)
         PresenteFechado(presente_group)
 
     def eventos_tela(self):
@@ -43,7 +44,6 @@ class WindowMain:
         tela_group.update()
         display.flip()
 
-
     def desenhar_tela(self):
         tela_group.draw(self.tela)
         presente_group.draw(self.tela)
@@ -55,7 +55,6 @@ class WindowMain:
             self.desenhar_tela()
             self.atualizar_tela()
             self.FPS_TICK.tick(60)
-
 
 
 g = WindowMain()
