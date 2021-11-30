@@ -2,7 +2,6 @@ from pygame.sprite import Sprite
 from pygame import Rect, mouse, Surface
 from pygame.transform import scale
 from tools.sprite_sheet import SpriteSheet
-import sqlite3
 
 SPRITESHEET = SpriteSheet('res/wine.png')
 
@@ -48,8 +47,12 @@ class VinhosMask(Sprite):
     def update(self, evento, vinho=None):
         ...
 
-    def click(self):
+    def pressionar(self):
         ...
+
+    def click(self):
+        return ['----', '', '', '', '', '', '']
+
 
 class Vinho(Sprite):
     locate_x = 16*4
@@ -60,6 +63,15 @@ class Vinho(Sprite):
                "Frisante":SPRITESHEET.corta_sprite(160, 208,16,16),
                "Licoroso":SPRITESHEET.corta_sprite(112, 208,16,16),
                "Branco":SPRITESHEET.corta_sprite(176, 208,16,16)}
+
+    sprite_click = {"Rosé":SPRITESHEET.corta_sprite(128, 224,16,16),
+               "Tinto":SPRITESHEET.corta_sprite(144, 224,16,16),
+               "Espumante":SPRITESHEET.corta_sprite(160, 224,16,16),
+               "Frisante":SPRITESHEET.corta_sprite(160, 224,16,16),
+               "Licoroso":SPRITESHEET.corta_sprite(112, 224,16,16),
+               "Branco":SPRITESHEET.corta_sprite(176, 224,16,16)}
+
+    botap_pressionado = None
 
     @classmethod
     def ajustar_locates(cls):
@@ -73,10 +85,20 @@ class Vinho(Sprite):
         global SPRITESHEET
         self.loc_y = self.locate_y
         self.dados_vinho = dados_vinho
-        self.image = self.sprites[dados_vinho[1]]
-        self.image = scale(self.image, (16*4, 16*4))
+        self.nao_pressionado()
+        self.pressionar = self.pressionado
         self.rect = Rect(self.locate_x, self.locate_y, 16*4, 16*4)
         self.ajustar_locates()
+
+    def pressionado(self):
+        self.image = self.sprite_click[self.dados_vinho[1]]
+        self.image = scale(self.image, (16*4, 16*4))
+        self.pressionar = self.nao_pressionado
+
+    def nao_pressionado(self):
+        self.image = self.sprites[self.dados_vinho[1]]
+        self.image = scale(self.image, (16*4, 16*4))
+        self.pressionar = self.pressionado
 
     def update(self, evento, reflesh = False):
         if reflesh:
@@ -85,6 +107,7 @@ class Vinho(Sprite):
             self.rect.y += evento*8
 
     def click(self):
+        self.pressionar()
         return self.dados_vinho
 
 class ListaVinhos(Sprite):
