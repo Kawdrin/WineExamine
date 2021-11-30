@@ -38,9 +38,28 @@ class JanelaVinhos(Sprite):
     def update(self):
         ...
 
+class VinhosMask(Sprite):
+    def __init__(self, *groups):
+        super().__init__(*groups)
+        self.image = Surface((16*5*4,16*3*4))
+        self.image.fill((204,108,82, 25))
+        self.rect = Rect(16*4, 16*6*4, 16*5*4, 16*3*4)
+
+    def update(self, evento, vinho=None):
+        ...
+
+    def click(self):
+        ...
+
 class Vinho(Sprite):
     locate_x = 16*4
     locate_y = 16*6*4
+    sprites = {"Rosé":SPRITESHEET.corta_sprite(128, 208,16,16),
+               "Tinto":SPRITESHEET.corta_sprite(144, 208,16,16),
+               "Espumante":SPRITESHEET.corta_sprite(160, 208,16,16),
+               "Frisante":SPRITESHEET.corta_sprite(160, 208,16,16),
+               "Licoroso":SPRITESHEET.corta_sprite(112, 208,16,16),
+               "Branco":SPRITESHEET.corta_sprite(176, 208,16,16)}
 
     @classmethod
     def ajustar_locates(cls):
@@ -49,23 +68,31 @@ class Vinho(Sprite):
             cls.locate_x = (cls.locate_x/6)
             cls.locate_y += 16*4
 
-    def __init__(self, *groups):
+    def __init__(self, dados_vinho,  *groups):
         super().__init__(*groups)
         global SPRITESHEET
-        self.image = SPRITESHEET.corta_sprite(128, 208,16,16)
+        self.loc_y = self.locate_y
+        self.dados_vinho = dados_vinho
+        self.image = self.sprites[dados_vinho[1]]
         self.image = scale(self.image, (16*4, 16*4))
         self.rect = Rect(self.locate_x, self.locate_y, 16*4, 16*4)
         self.ajustar_locates()
 
-    def update(self, evento):
-        self.rect.y += evento*8
+    def update(self, evento, reflesh = False):
+        if reflesh:
+            self.rect.y = self.loc_y
+        else:
+            self.rect.y += evento*8
+
+    def click(self):
+        return self.dados_vinho
 
 class ListaVinhos(Sprite):
     def __init__(self, *groups):
         super().__init__(*groups)
         self.image = Surface((16*5*4,16*3*4))
         self.image.fill((204,108,82))
-        self.rect = Rect(16*4, 16*6*4, 16*5*4, 16*3*4)
+        self.rect = Rect(16*4, 16*5*4, 16*4*4, 16*4*4)
 
     def update(self):
         ...
